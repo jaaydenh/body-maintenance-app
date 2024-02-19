@@ -1,52 +1,47 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider        = "prisma-client-js"
     previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-
-    // Do not use foreign keys (PlanetScale does not support them)
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
+    id          Int      @id @default(autoincrement())
+    name        String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
     createdById String
+    createdBy   User     @relation(fields: [createdById], references: [id])
 
     @@index([name])
     @@index([createdById])
 }
 
 model Exercise {
-    id          Int      @id @default(autoincrement())
-    name        String
-    description String
-    image       String
-    videoId     String
-    length      Int
-    routines    Routine[]
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  videoId     String
+  length      Int
+  sets        Int
+  unilateral  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  routines    Routine[]
 
-    @@index([name])
+  @@index([name])
 }
 
 model Routine {
-  id          Int  @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   name        String
-  owner       User @relation(fields: [ownerId], references: [id])
   ownerId     String
   scheduledAt DateTime
+  owner       User       @relation(fields: [ownerId], references: [id])
   exercises   Exercise[]
 
   @@index([ownerId])
