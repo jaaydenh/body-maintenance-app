@@ -8,9 +8,10 @@ type ExerciseAPIResponse = {
   id: number;
   name: string;
   description: string;
-  image: string;
   videoId: string;
   length: number;
+  sets: number;
+  unilateral: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,7 +33,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
     () => {
       setTimeElapsed((timeElapsed) => timeElapsed - 1);
       if (timeElapsed === 1) {
-        onTimerComplete();
+        timerComplete();
       }
     },
     timerStatus === "running" ? 1000 : null,
@@ -54,7 +55,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
     });
   };
 
-  const onTimerComplete = () => {
+  const timerComplete = () => {
     // TODO: play sound
     console.log({ exerciseIndex });
 
@@ -84,8 +85,8 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
         {exercises.map(({ id, name, length }, index) => (
           <div
             key={id}
-            className={`bg-purple mb-8 flex h-40 w-96 flex-row rounded-lg border-2 text-lg font-bold ${exerciseIndex === index ? "border-white" : "border-transparent"}`}
-            onClick={() => setActiveExercise(id)}
+            className={`mb-8 flex h-40 w-96 flex-row rounded-lg border-2 bg-purple text-lg font-bold ${exerciseIndex === index ? "border-white" : "border-transparent"}`}
+            onClick={() => setExerciseIndex(index)}
           >
             <div className="flex items-center justify-center overflow-hidden rounded-lg pl-6 pr-10">
               <video
@@ -109,9 +110,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
           </div>
         ))}
 
-        <div className="sticky bottom-0 w-96 bg-slate-400 bg-opacity-95">
-          <div className="w-ma mb-4 ml-auto mr-auto mt-8 max-w-fit text-3xl">
-            <div>{timeElapsed}</div>
+        <div className="sticky bottom-0 h-32 bg-slate-400 bg-opacity-95 p-2">
+          <div className="text-1xl mb-3 ml-auto mr-auto max-w-fit">
+            <div>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</div>
           </div>
           <div className="ml-auto mr-auto max-w-fit">
             <button className="btn-square btn" onClick={handlePrev}>
@@ -158,6 +159,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
                 <path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z" />
               </svg>
             </button>
+          </div>
+          <div className="w-ma mb-1 ml-auto mr-auto mt-1 max-w-fit text-3xl">
+            <div>{timeElapsed}</div>
           </div>
         </div>
       </div>
