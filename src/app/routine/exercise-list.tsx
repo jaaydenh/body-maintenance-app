@@ -116,7 +116,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
               <li>{exercises[exerciseIndex]?.unilateral && side}</li>
               <li>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</li>
               <li>
-                Set {exercises[exerciseIndex]?.sets - setsRemaining + 1}/
+                Set {exercises[exerciseIndex]?.sets ?? 1 - setsRemaining + 1}/
                 {exercises[exerciseIndex]?.sets}
               </li>
             </ul>
