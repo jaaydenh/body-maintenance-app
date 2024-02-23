@@ -42,9 +42,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   useInterval(
     () => {
       setTimeElapsed((timeElapsed) => timeElapsed - 1);
-      if (timeElapsed === 1) {
-        timerComplete();
-      }
+      //   if (timeElapsed === 1) {
+      //     timerComplete();
+      //   }
     },
     timerStatus === "running" ? 1000 : null,
   );
