@@ -31,13 +31,13 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   const [timerStatus, setTimerStatus] = React.useState("idle");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  if (videoRefs.current[exerciseIndex]) {
-    videoRefs.current[exerciseIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "nearest",
-    });
-  }
+  //   if (videoRefs.current[exerciseIndex]) {
+  //     videoRefs.current[exerciseIndex]?.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "center",
+  //       inline: "nearest",
+  //     });
+  //   }
 
   useInterval(
     () => {
