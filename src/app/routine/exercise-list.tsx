@@ -25,9 +25,19 @@ interface ExerciseListProps {
 const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = React.useState(BREAK_DURATION);
+  const [setsRemaining, setSetsRemaining] = useState(exercises[0]?.sets ?? 1);
+  const [side, setSide] = React.useState("right");
   const [isBreak, setIsBreak] = useState(true);
   const [timerStatus, setTimerStatus] = React.useState("idle");
   const videoRefs = useRef(Array(exercises.length).fill(null));
+
+  if (videoRefs.current[exerciseIndex]) {
+    videoRefs.current[exerciseIndex].scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest",
+    });
+  }
 
   useInterval(
     () => {
@@ -44,12 +54,16 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   };
 
   const handlePrev = () => {
+    if (exerciseIndex === 0) return;
+
+    setSetsRemaining(exercises[exerciseIndex + -1]?.sets ?? 1);
     setExerciseIndex((prevIndex) => {
       return prevIndex > 0 ? prevIndex - 1 : 0;
     });
   };
 
   const handleNext = () => {
+    setSetsRemaining(exercises[exerciseIndex + 1]?.sets ?? 1);
     setExerciseIndex((prevIndex) => {
       return prevIndex < exercises.length - 1 ? prevIndex + 1 : prevIndex;
     });
@@ -57,7 +71,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
 
   const timerComplete = () => {
     // TODO: play sound
-    console.log({ exerciseIndex });
 
     if (isBreak) {
       setIsBreak(false);
@@ -75,17 +88,44 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
       setIsBreak(true);
       setTimeElapsed(BREAK_DURATION);
       videoRefs.current[exerciseIndex].pause();
-      handleNext();
+      if (exercises[exerciseIndex]?.unilateral) {
+        setSide((current) => (current === "left" ? "right" : "left"));
+      }
+      if (setsRemaining === 1) {
+        if (exercises[exerciseIndex]?.unilateral) {
+          if (side === "left") {
+            handleNext();
+          }
+        } else {
+          handleNext();
+        }
+      } else {
+        setSetsRemaining((current) => current - 1);
+      }
     }
   };
 
   return (
     <>
-      <div className="h-[75vh] w-auto overflow-y-auto overflow-x-clip pr-6">
-        {exercises.map(({ id, name, length }, index) => (
+      <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">
+        <div
+          className={`sticky top-0 z-10 h-10 bg-slate-400 bg-opacity-95 p-2 ${isBreak ? "bg-orange-500" : "bg-green-500"}`}
+        >
+          <div className="text-1xl mb-3 font-bold">
+            <ul className="flex flex-row justify-between">
+              <li>{exercises[exerciseIndex]?.unilateral && side}</li>
+              <li>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</li>
+              <li>
+                Set {exercises[exerciseIndex]?.sets - setsRemaining + 1}/
+                {exercises[exerciseIndex]?.sets}
+              </li>
+            </ul>
+          </div>
+        </div>
+        {exercises.map(({ id, name, length, videoId, sets }, index) => (
           <div
             key={id}
-            className={`mb-8 flex h-40 w-96 flex-row rounded-lg border-2 bg-purple text-lg font-bold ${exerciseIndex === index ? "border-white" : "border-transparent"}`}
+            className={`mb-8 flex h-40 w-96 flex-row rounded-lg border-2 bg-purple text-lg ${exerciseIndex === index ? "border-white" : "border-transparent"}`}
             onClick={() => setExerciseIndex(index)}
           >
             <div className="flex items-center justify-center overflow-hidden rounded-lg pl-6 pr-10">
@@ -99,37 +139,40 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
                 loop
                 controls
               >
-                <source src="./test.mp4" type="video/mp4" />
+                <source src={`./${videoId}.mp4`} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
             <div>
-              <div className="px-2 pt-4">{name}</div>
-              <div className="px-2 pt-4">1 Set - {length}s </div>
+              <div className="px-2 pt-4 font-medium">{name}</div>
+              <div className="px-2 pt-4 text-sm font-normal">
+                {sets} {sets > 1 ? "Sets" : "Set"} - {length}s{" "}
+              </div>
             </div>
           </div>
         ))}
 
-        <div className="sticky bottom-0 h-32 bg-slate-400 bg-opacity-95 p-2">
-          <div className="text-1xl mb-3 ml-auto mr-auto max-w-fit">
+        <div className="sticky bottom-0 h-28 rounded-lg bg-slate-400 bg-opacity-95 p-2">
+          {/* <div className="text-1xl mb-3 ml-auto mr-auto max-w-fit">
             <div>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</div>
-          </div>
-          <div className="ml-auto mr-auto max-w-fit">
-            <button className="btn-square btn" onClick={handlePrev}>
+          </div> */}
+          <div className="mt-4 flex justify-evenly">
+            <button onClick={handlePrev}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-8 w-8"
+                viewBox="0 0 24 24"
                 fill="currentColor"
                 stroke="currentColor"
               >
                 <path d="M10.6,12.71a1,1,0,0,1,0-1.42l4.59-4.58a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0L9.19,9.88a3,3,0,0,0,0,4.24l4.59,4.59a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.42Z" />
               </svg>
             </button>
-            <button className="btn-square btn" onClick={toggleTimer}>
+            <button onClick={toggleTimer}>
               {timerStatus === "running" ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-8 w-8"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   stroke="currentColor"
@@ -140,7 +183,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
               ) : (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-8 w-8"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                   stroke="currentColor"
@@ -149,10 +192,11 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
                 </svg>
               )}
             </button>
-            <button className="btn-square btn" onClick={handleNext}>
+            <button onClick={handleNext}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-8 w-8"
+                viewBox="0 0 24 24"
                 fill="currentColor"
                 stroke="currentColor"
               >
@@ -160,7 +204,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
               </svg>
             </button>
           </div>
-          <div className="w-ma mb-1 ml-auto mr-auto mt-1 max-w-fit text-3xl">
+          <div className="w-ma mb-1 ml-auto mr-auto mt-3 max-w-fit text-2xl font-bold">
             <div>{timeElapsed}</div>
           </div>
         </div>
