@@ -29,10 +29,10 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   const [side, setSide] = React.useState("right");
   const [isBreak, setIsBreak] = useState(true);
   const [timerStatus, setTimerStatus] = React.useState("idle");
-  const videoRefs = useRef(Array(exercises.length).fill(null));
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   if (videoRefs.current[exerciseIndex]) {
-    videoRefs.current[exerciseIndex].scrollIntoView({
+    videoRefs.current[exerciseIndex]?.scrollIntoView({
       behavior: "smooth",
       block: "center",
       inline: "nearest",
@@ -80,14 +80,16 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
 
       try {
         // play the video
-        videoRefs.current[exerciseIndex].play();
+        if (typeof videoRefs.current !== "undefined") {
+          void videoRefs.current[exerciseIndex]?.play();
+        }
       } catch (error) {
         console.log(error);
       }
     } else {
       setIsBreak(true);
       setTimeElapsed(BREAK_DURATION);
-      videoRefs.current[exerciseIndex].pause();
+      videoRefs.current[exerciseIndex]?.pause();
       if (exercises[exerciseIndex]?.unilateral) {
         setSide((current) => (current === "left" ? "right" : "left"));
       }
