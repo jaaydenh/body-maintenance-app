@@ -31,20 +31,20 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   const [timerStatus, setTimerStatus] = React.useState("idle");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  //   if (videoRefs.current[exerciseIndex]) {
-  //     videoRefs.current[exerciseIndex]?.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "center",
-  //       inline: "nearest",
-  //     });
-  //   }
+  if (videoRefs.current[exerciseIndex]) {
+    videoRefs.current[exerciseIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest",
+    });
+  }
 
   useInterval(
     () => {
       setTimeElapsed((timeElapsed) => timeElapsed - 1);
-      //   if (timeElapsed === 1) {
-      //     timerComplete();
-      //   }
+      if (timeElapsed === 1) {
+        timerComplete();
+      }
     },
     timerStatus === "running" ? 1000 : null,
   );
@@ -79,7 +79,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
       }
 
       try {
-        // play the video
         if (typeof videoRefs.current !== "undefined") {
           videoRefs.current[exerciseIndex]?.play().then(
             (value) => {
