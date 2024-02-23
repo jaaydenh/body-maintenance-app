@@ -81,7 +81,14 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
       try {
         // play the video
         if (typeof videoRefs.current !== "undefined") {
-          void videoRefs.current[exerciseIndex]?.play();
+          videoRefs.current[exerciseIndex]?.play().then(
+            (value) => {
+              console.log(value);
+            },
+            (error) => {
+              throw error;
+            },
+          );
         }
       } catch (error) {
         console.log(error);
