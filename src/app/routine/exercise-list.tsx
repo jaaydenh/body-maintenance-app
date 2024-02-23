@@ -71,6 +71,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
 
   const timerComplete = () => {
     // TODO: play sound
+    // test
 
     if (isBreak) {
       setIsBreak(false);
