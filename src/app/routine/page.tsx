@@ -1,6 +1,7 @@
 import React from "react";
 import { api } from "~/trpc/server";
 import ExerciseList from "./exercise-list";
+export const dynamic = "force-dynamic";
 
 export default async function Routine() {
   const exercises = await api.exercise.getAll.query();
