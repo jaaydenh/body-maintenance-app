@@ -13,7 +13,7 @@ export default async function Home() {
       {session && (
         <div className="container flex flex-col items-center gap-12 px-4 py-14">
           <h1 className="font-extrabold tracking-tight sm:text-[5rem] lg:text-xl">
-            Today's Program
+            Today&apos;s Program
           </h1>
           <Link
             href={"/routine"}
