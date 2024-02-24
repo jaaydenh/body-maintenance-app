@@ -1,9 +1,11 @@
+import { unstable_noStore as noStore } from "next/cache";
 import React from "react";
 import { api } from "~/trpc/server";
 import ExerciseList from "./exercise-list";
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function Routine() {
+  noStore();
   const exercises = await api.exercise.getAll.query();
 
   return (

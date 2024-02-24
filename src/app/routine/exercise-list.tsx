@@ -118,7 +118,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
     <>
       <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">
         <div
-          className={`sticky top-0 z-10 h-10 bg-slate-400 bg-opacity-95 p-2 ${isBreak ? "bg-orange-500" : "bg-green-500"}`}
+          className={`sticky top-0 z-10 h-10 bg-opacity-95 p-2 ${isBreak ? "bg-orange-500" : "bg-green-500"}`}
         >
           <div className="text-1xl mb-3 font-bold">
             <ul className="flex flex-row justify-between">
@@ -147,6 +147,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
                 height="160"
                 loop
                 controls
+                playsInline
               >
                 <source src={`./${videoId}.mp4`} type="video/mp4" />
                 Your browser does not support the video tag.
