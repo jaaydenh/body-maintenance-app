@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 
 import { useInterval } from "../hooks/useInterval";
+import Video from "../_components/video";
 
 type ExerciseAPIResponse = {
   id: number;
@@ -71,7 +72,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
 
   const timerComplete = () => {
     // TODO: play sound
-    // test
 
     if (isBreak) {
       setIsBreak(false);
@@ -138,20 +138,12 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
             onClick={() => setExerciseIndex(index)}
           >
             <div className="flex items-center justify-center overflow-hidden rounded-lg pl-6 pr-10">
-              <video
-                ref={(element) => {
+              <Video
+                fileName={`./${videoId}.mp4`}
+                videoRef={(element: HTMLVideoElement) => {
                   videoRefs.current[index] = element;
                 }}
-                className="scale-150"
-                width="120"
-                height="160"
-                loop
-                controls
-                playsInline
-              >
-                <source src={`./${videoId}.mp4`} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              />
             </div>
             <div>
               <div className="px-2 pt-4 font-medium">{name}</div>
@@ -161,11 +153,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
             </div>
           </div>
         ))}
-
         <div className="sticky bottom-0 h-28 rounded-lg bg-slate-400 bg-opacity-95 p-2">
-          {/* <div className="text-1xl mb-3 ml-auto mr-auto max-w-fit">
-            <div>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</div>
-          </div> */}
           <div className="mt-4 flex justify-evenly">
             <button onClick={handlePrev}>
               <svg
