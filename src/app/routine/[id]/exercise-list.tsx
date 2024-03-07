@@ -113,7 +113,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
       }
     }
   };
-  console.log({ exercises });
+
   return (
     <>
       <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">

@@ -14,16 +14,22 @@ export default async function Home() {
       {!session && <SignIn />}
       {session && (
         <div className="container flex flex-col items-center gap-12 px-4 py-14">
-          <h1 className="font-extrabold tracking-tight sm:text-[5rem] lg:text-xl">
+          <h1 className="font-extrabold tracking-tight sm:text-[2rem] lg:text-xl">
             Today&apos;s Program
           </h1>
           {routines.map((routine) => (
             <Link
               key={routine.id}
               href={`/routine/${routine.id}`}
-              className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+              className="rounded-md bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
             >
-              {routine.name}
+              {routine.name} -{" "}
+              {routine.scheduledAt.toLocaleString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}{" "}
+              - {routine.duration / 60} min
             </Link>
           ))}
           <Link

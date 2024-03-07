@@ -13,6 +13,7 @@ export const routineRouter = createTRPCRouter({
         data: {
           name: 'Test Routine',
           scheduledAt: '',
+          duration: 120,
           owner: { connect: { id: ctx.session.user.id } },
           exercises: {
             connect: [
