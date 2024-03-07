@@ -2,8 +2,8 @@
 
 import React, { useState, useRef } from "react";
 
-import { useInterval } from "../hooks/useInterval";
-import Video from "../_components/video";
+import { useInterval } from "../../hooks/useInterval";
+import Video from "../../_components/video";
 
 type ExerciseAPIResponse = {
   id: number;
@@ -113,7 +113,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
       }
     }
   };
-
+  console.log({ exercises });
   return (
     <>
       <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">
@@ -139,7 +139,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
           >
             <div className="flex items-center justify-center overflow-hidden rounded-lg pl-6 pr-10">
               <Video
-                fileName={`./${videoId}.mp4`}
+                fileName={`../${videoId}.mp4`}
                 videoRef={(element: HTMLVideoElement) => {
                   videoRefs.current[index] = element;
                 }}

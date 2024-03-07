@@ -2,10 +2,12 @@ import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 
 import { getServerAuthSession } from "~/server/auth";
+import { api } from "~/trpc/server";
 
 export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
+  const routines = await api.routine.getActive.query();
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -15,12 +17,15 @@ export default async function Home() {
           <h1 className="font-extrabold tracking-tight sm:text-[5rem] lg:text-xl">
             Today&apos;s Program
           </h1>
-          <Link
-            href={"/routine"}
-            className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-          >
-            Routine
-          </Link>
+          {routines.map((routine) => (
+            <Link
+              key={routine.id}
+              href={`/routine/${routine.id}`}
+              className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+            >
+              {routine.name}
+            </Link>
+          ))}
           <Link
             href={session ? "/api/auth/signout" : "/api/auth/signin"}
             className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
