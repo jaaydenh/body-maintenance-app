@@ -7,17 +7,17 @@ import { api } from "~/trpc/server";
 export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
-  const routines = await api.routine.getActive.query();
+  const routines = session?.user ? await api.routine.getActive.query() : null;
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      {!session && <SignIn />}
-      {session && (
+      {!session?.user && <SignIn />}
+      {session?.user && (
         <div className="container flex flex-col items-center gap-12 px-4 py-14">
           <h1 className="font-extrabold tracking-tight sm:text-[2rem] lg:text-xl">
             Today&apos;s Program
           </h1>
-          {routines.map((routine) => (
+          {routines?.map((routine) => (
             <Link
               key={routine.id}
               href={`/routine/${routine.id}`}
