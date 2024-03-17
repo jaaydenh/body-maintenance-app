@@ -5,7 +5,7 @@ import { useState, createContext, useEffect } from "react";
 import { createRoutines } from "../actions/actions";
 import CreateTaskMultiStepForm from "./CreateTaskMultiStepForm";
 
-const FORM_STATE = {
+export const FORM_STATE = {
   selectedIndex: 0,
   steps: {
     routineCount: {
@@ -57,7 +57,7 @@ function CreateTaskMultiStepFormContainer() {
   // }, [form]);
 
   useEffect(() => {
-    async function callServerAction(form: any) {
+    async function callServerAction(form: typeof FORM_STATE) {
       await createRoutines(form);
     }
 
