@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { getServerAuthSession } from "~/server/auth";
@@ -9,13 +10,17 @@ export default async function Home() {
   const session = await getServerAuthSession();
   const routines = session?.user ? await api.routine.getActive.query() : null;
 
+  if (session?.user && !routines?.length) {
+    redirect("/onboarding");
+  }
+
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
       {!session?.user && <SignIn />}
       {session?.user && (
         <div className="container flex flex-col items-center gap-12 px-4 py-14">
           <h1 className="font-extrabold tracking-tight sm:text-[2rem] lg:text-xl">
-            Today&apos;s Program
+            Today&apos;s Routines
           </h1>
           {routines?.map((routine) => (
             <Link
