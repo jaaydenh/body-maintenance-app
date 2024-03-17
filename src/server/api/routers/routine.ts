@@ -12,7 +12,7 @@ export const routineRouter = createTRPCRouter({
       return ctx.db.routine.create({
         data: {
           name: 'Test Routine',
-          scheduledAt: '',
+          scheduledAt: '2024-02-19T16:25:10.398Z',
           duration: 120,
           owner: { connect: { id: ctx.session.user.id } },
           exercises: {
