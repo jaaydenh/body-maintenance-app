@@ -5,28 +5,22 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
+const exerciseSchema = z.object({
+  id: z.number(),
+})
+
 export const routineRouter = createTRPCRouter({
-  create: protectedProcedure
-    // .input(z.object({ name: z.string().min(1) }))
-    .mutation(async ({ ctx }) => {
+  createInitial: protectedProcedure
+    .input(z.object({ name: z.string(), routineLength: z.number().min(5), exercises: z.array(exerciseSchema) }))
+    .mutation(async ({ ctx, input }) => {
       return ctx.db.routine.create({
         data: {
-          name: 'Test Routine',
+          name: input.name,
           scheduledAt: '2024-02-19T16:25:10.398Z',
-          duration: 120,
+          duration: input.routineLength * 60,
           owner: { connect: { id: ctx.session.user.id } },
           exercises: {
-            connect: [
-              {
-                id: 1,
-              },
-              {
-                id: 2,
-              },
-              {
-                id: 3,
-              }
-            ]
+            connect: input.exercises
           }
         },
       });

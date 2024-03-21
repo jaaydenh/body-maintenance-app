@@ -50,12 +50,6 @@ export const FormStateContext = createContext({
 function CreateTaskMultiStepFormContainer() {
   const [form, setForm] = useState(FORM_STATE);
 
-  // const onComplete = useCallback(async () => {
-  //   // do something with "state"
-  //   console.log("onComplete: ", form);
-  //   await api.routine.create.mutate();
-  // }, [form]);
-
   useEffect(() => {
     async function callServerAction(form: typeof FORM_STATE) {
       await createRoutines(form);
@@ -63,10 +57,6 @@ function CreateTaskMultiStepFormContainer() {
 
     const lastStepIndex = FORM_STEPS.length - 1;
     if (form.selectedIndex === lastStepIndex) {
-      // onComplete({
-      //   routineCount: form.steps.routineCount.value.routineCount.toString(),
-      //   routineLength: form.steps.routineLength.value.routineLength.toString(),
-      // });
       callServerAction(form).catch((e) => {
         console.log("server action error: " + e);
       });
