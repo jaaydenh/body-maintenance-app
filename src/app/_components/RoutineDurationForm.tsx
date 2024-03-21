@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useContext } from "react";
-import { useForm, useFormState, useController } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import { produce } from "immer";
 
 import { FormStateContext } from "./CreateTaskMultiStepFormContainer";
+
+type FormValues = {
+  routineLength: number;
+};
 
 function RoutineDurationForm(
   props: React.PropsWithChildren<{
@@ -14,18 +18,12 @@ function RoutineDurationForm(
 ) {
   const { form, setForm } = useContext(FormStateContext);
 
-  const { handleSubmit, control } = useForm({
+  const { register, handleSubmit, control, watch } = useForm<FormValues>({
     shouldUseNativeValidation: true,
     defaultValues: form.steps.routineLength.value,
   });
 
   const { isDirty } = useFormState({ control });
-
-  const { field } = useController({
-    name: "routineLength",
-    control,
-    rules: { required: true },
-  });
 
   useEffect(() => {
     setForm(
@@ -64,11 +62,11 @@ function RoutineDurationForm(
             htmlFor="steps-range-slider-usage"
             className="mx-8 mb-6 text-lg font-medium dark:text-white"
           >
-            {field.value} min
+            {watch("routineLength")} min
           </label>
           <input
             type="range"
-            {...field}
+            {...register("routineLength", { required: true, min: 5, max: 30 })}
             className="w-full cursor-pointer appearance-none rounded-full focus:outline-none disabled:pointer-events-none disabled:opacity-50 [&::-moz-range-thumb]:h-2.5
             [&::-moz-range-thumb]:w-2.5
             [&::-moz-range-thumb]:appearance-none
