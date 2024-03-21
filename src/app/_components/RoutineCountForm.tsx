@@ -6,6 +6,9 @@ import { produce } from "immer";
 
 import { FormStateContext } from "./CreateTaskMultiStepFormContainer";
 
+type FormValues = {
+  routineCount: number;
+};
 function RoutineCountForm(
   props: React.PropsWithChildren<{
     onNext: () => void;
@@ -13,7 +16,7 @@ function RoutineCountForm(
 ) {
   const { form, setForm } = useContext(FormStateContext);
 
-  const { register, handleSubmit, control } = useForm({
+  const { register, handleSubmit, control } = useForm<FormValues>({
     shouldUseNativeValidation: true,
     defaultValues: {
       routineCount: form.steps.routineCount.value.routineCount,
@@ -23,8 +26,6 @@ function RoutineCountForm(
   const { isDirty } = useFormState({
     control,
   });
-
-  const routineCountControl = register("routineCount", { required: true });
 
   useEffect(() => {
     setForm(
@@ -63,7 +64,7 @@ function RoutineCountForm(
           type="text"
           id="routine-count"
           className="block w-20 rounded-lg border-gray-200 px-4 py-3 text-sm text-black focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-700 dark:bg-slate-900 dark:text-gray-400 dark:focus:ring-gray-600"
-          {...routineCountControl}
+          {...register("routineCount", { required: true, min: 1, max: 24 })}
         ></input>
 
         <button
