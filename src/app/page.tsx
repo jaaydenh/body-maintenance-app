@@ -2,6 +2,8 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+import Header from "./_components/Header";
+import Subscribe from "./_components/Subscribe";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -16,6 +18,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <Header />
       {!session?.user && <SignIn />}
       {session?.user && (
         <div className="container flex flex-col items-center gap-12 px-4 py-14">
@@ -52,20 +55,25 @@ export default async function Home() {
 async function SignIn() {
   const session = await getServerAuthSession();
   return (
-    <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-      <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-        Body <span className="text-[hsl(280,100%,70%)]">Maintenance</span>
+    <div className="mx container mx-auto flex flex-col items-center justify-center gap-12 px-8 py-12 text-center">
+      <h1 className="text-3xl font-bold leading-none sm:text-[5rem]">
+        Maintain your body for longevity
       </h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-        <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
-          <h3 className="text-2xl font-bold">What</h3>
-          <div className="text-lg">What is body maintenance.</div>
+        <div className="flex flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
+          <p className="text-lg">
+            AI enhanced personalization that uses your feedback to optimize
+            mobility, stability and strength
+          </p>
         </div>
-        <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
-          <h3 className="text-2xl font-bold">Why</h3>
-          <div className="text-lg">Why body maintenance.</div>
+        <div className="flex flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
+          <p className="text-lg">
+            Rebuild and maintain your body sustainably and live pain free for
+            your entire life
+          </p>
         </div>
       </div>
+      <Subscribe />
       <div className="flex flex-col items-center gap-2">
         <div className="flex flex-col items-center justify-center gap-4">
           <p className="text-center text-2xl text-white">
