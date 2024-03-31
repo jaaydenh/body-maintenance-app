@@ -1,5 +1,9 @@
 'use server'
 
+import { Resend } from "resend";
+import { z } from 'zod'
+import { revalidatePath } from "next/cache";
+
 import { api } from "~/trpc/server";
 
 import { type FORM_STATE } from "../_components/CreateTaskMultiStepFormContainer";
@@ -60,5 +64,39 @@ export async function createRoutines(form: typeof FORM_STATE) {
     await api.routine.createInitial.mutate(MORNING_MOBILITY)
     await api.routine.createInitial.mutate(DESK_PREHAB)
     await api.routine.createInitial.mutate(HIP_OPENER)
+  }
+}
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const schema = z.object({
+  email: z.string().email({
+    message: 'Invalid email address',
+  }),
+})
+
+export async function createContact(prevState: { message: string }, formData: FormData) {
+  const parse = schema.safeParse({
+    email: formData.get('email'),
+  })
+
+  if (!parse.success) {
+    return {
+      message: 'Invalid email address'
+    }
+  }
+
+  try {
+    await resend.contacts.create({
+      email: parse.data.email,
+      unsubscribed: false,
+      audienceId: "f0d026be-bc3a-4775-b0a9-2b9a9831adea",
+    });
+
+    revalidatePath('/')
+    return { message: 'Subscribed Successfully' }
+  } catch (error) {
+    console.log(error);
+    return { message: 'Failed to subscribe' }
   }
 }
