@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import React from "react";
 
-import CreateTaskMultiStepFormContainer from "../_components/CreateTaskMultiStepFormContainer";
+import CreateTaskMultiStepFormContainer from "@/components/CreateTaskMultiStepFormContainer";
 
 export default async function Onboarding() {
   noStore();

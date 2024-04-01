@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import { api } from "~/trpc/server";
 
-import { type FORM_STATE } from "../_components/CreateTaskMultiStepFormContainer";
+import { type FORM_STATE } from "@/components/CreateTaskMultiStepFormContainer";
 
 const MORNING_MOBILITY = {
   name: 'Morning Mobility', routineLength: 5, exercises: [

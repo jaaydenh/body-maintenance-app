@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 
 import { useInterval } from "../../hooks/useInterval";
-import Video from "../../_components/video";
+import Video from "@/components/video";
 
 type ExerciseAPIResponse = {
   id: number;

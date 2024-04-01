@@ -2,8 +2,8 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import Header from "./_components/Header";
-import Subscribe from "./_components/Subscribe";
+import Header from "@/components/Header";
+import Subscribe from "@/components/Subscribe";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
@@ -40,12 +40,6 @@ export default async function Home() {
               - {routine.duration / 60} min
             </Link>
           ))}
-          <Link
-            href={session ? "/api/auth/signout" : "/api/auth/signin"}
-            className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-          >
-            {session ? "Sign out" : "Sign in"}
-          </Link>
         </div>
       )}
     </main>
@@ -53,7 +47,6 @@ export default async function Home() {
 }
 
 async function SignIn() {
-  const session = await getServerAuthSession();
   return (
     <div className="mx container mx-auto flex flex-col items-center justify-center gap-12 px-8 py-12 text-center">
       <h1 className="text-3xl font-bold leading-none sm:text-[5rem]">
@@ -74,19 +67,6 @@ async function SignIn() {
         </div>
       </div>
       <Subscribe />
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <p className="text-center text-2xl text-white">
-            {session && <span>Logged in as {session.user?.name}</span>}
-          </p>
-          <Link
-            href={session ? "/api/auth/signout" : "/api/auth/signin"}
-            className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-          >
-            {session ? "Sign out" : "Sign in"}
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

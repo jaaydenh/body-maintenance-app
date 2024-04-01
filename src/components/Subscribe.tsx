@@ -2,7 +2,7 @@
 
 import { useFormState } from "react-dom";
 
-import { createContact } from "../actions/actions";
+import { createContact } from "../app/actions/actions";
 
 const initialState = {
   message: "",
