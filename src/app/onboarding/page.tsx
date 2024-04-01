@@ -7,7 +7,7 @@ export default async function Onboarding() {
   noStore();
 
   return (
-    <main className="flex min-h-screen flex-col items-center">
+    <main className="flex flex-col items-center">
       <CreateTaskMultiStepFormContainer />
     </main>
   );

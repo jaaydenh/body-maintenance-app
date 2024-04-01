@@ -17,11 +17,11 @@ export default async function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <main className="flex flex-col">
       <Header />
       {!session?.user && <SignIn />}
       {session?.user && (
-        <div className="container flex flex-col items-center gap-12 px-4 py-14">
+        <div className="flex flex-col items-center gap-12 py-14">
           <h1 className="font-extrabold tracking-tight sm:text-[2rem] lg:text-xl">
             Today&apos;s Routines
           </h1>
@@ -29,7 +29,7 @@ export default async function Home() {
             <Link
               key={routine.id}
               href={`/routine/${routine.id}`}
-              className="rounded-md bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+              className="min-w-80 rounded-md bg-white/10 py-3 text-center font-semibold no-underline transition hover:bg-white/20"
             >
               {routine.name} -{" "}
               {routine.scheduledAt.toLocaleString("en-US", {
