@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
+import Header from "@/components/Header";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({
@@ -26,7 +27,10 @@ export default function RootLayout({
       <body
         className={`font-sans ${inter.variable} min-h-screen bg-[#2e026d] bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white antialiased`}
       >
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          <Header />
+          {children}
+        </TRPCReactProvider>
         <Analytics />
       </body>
     </html>

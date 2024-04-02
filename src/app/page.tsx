@@ -2,7 +2,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import Header from "@/components/Header";
 import Subscribe from "@/components/Subscribe";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
@@ -18,7 +17,6 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col">
-      <Header />
       {!session?.user && <SignIn />}
       {session?.user && (
         <div className="flex flex-col items-center gap-12 py-14">
@@ -48,11 +46,11 @@ export default async function Home() {
 
 async function SignIn() {
   return (
-    <div className="mx container mx-auto flex flex-col items-center justify-center gap-12 px-8 py-12 text-center">
+    <div className="flex flex-col items-center justify-center gap-12 px-8 py-12 text-center">
       <h1 className="text-3xl font-bold leading-none sm:text-[5rem]">
         Maintain your body for longevity
       </h1>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+      <div className="grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
         <div className="flex flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
           <p className="text-lg">
             AI enhanced personalization that uses your feedback to optimize

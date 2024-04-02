@@ -1,7 +1,7 @@
 import { getServerAuthSession } from "~/server/auth";
 
 import { LogOut } from "lucide-react";
-import ProfileIcon from "@/components/icons/ProfileIcon";
+import Profile from "@/components/icons/Profile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ async function Header() {
   return (
     <header className="z-50 flex w-full flex-wrap bg-black py-3 text-sm sm:flex-nowrap sm:justify-start sm:py-0">
       <nav
-        className="relative mx-auto w-full max-w-[85rem] px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
+        className="relative mx-auto w-full px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8"
         aria-label="Global"
       >
         <div className="flex items-center justify-between">
@@ -57,8 +57,8 @@ async function Header() {
             {session?.user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-x-2 font-medium text-white/[.8] hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6">
-                    <ProfileIcon />
+                  <button className="flex items-center gap-x-2 font-medium text-white/[.8] outline-none hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6">
+                    <Profile width={24} height={24} />
                     Profile
                   </button>
                 </DropdownMenuTrigger>
@@ -74,10 +74,10 @@ async function Header() {
             )}
             {!session?.user && (
               <a
-                className="flex items-center gap-x-2 font-medium text-white/[.8] hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6"
+                className="flex items-center gap-x-2 font-medium text-white/[.8] outline-none hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6"
                 href="/api/auth/signin"
               >
-                <ProfileIcon />
+                <Profile width={24} height={24} />
                 Sign in
               </a>
             )}

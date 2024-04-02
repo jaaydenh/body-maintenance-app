@@ -25,6 +25,7 @@ const Video: React.FC<VideoProps> = ({ fileName, videoRef }) => {
       width="120"
       height="160"
       loop
+      muted
       controls
       preload="auto"
       playsInline
