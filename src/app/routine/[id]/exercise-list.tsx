@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { ChevronRight, ChevronLeft, Play, Pause } from "lucide-react";
 
 import { useInterval } from "../../hooks/useInterval";
 import Video from "@/components/video";
@@ -24,6 +25,7 @@ interface ExerciseListProps {
 }
 
 const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
+  const [inProgress, setInProgress] = useState(false);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = React.useState(BREAK_DURATION);
   const [setsRemaining, setSetsRemaining] = useState(exercises[0]?.sets ?? 1);
@@ -68,6 +70,11 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
     setExerciseIndex((prevIndex) => {
       return prevIndex < exercises.length - 1 ? prevIndex + 1 : prevIndex;
     });
+  };
+
+  const handleStartRoutine = () => {
+    setInProgress(true);
+    toggleTimer();
   };
 
   const timerComplete = () => {
@@ -117,20 +124,27 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   return (
     <>
       <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">
-        <div
-          className={`sticky top-0 z-10 h-10 bg-opacity-95 p-2 ${isBreak ? "bg-orange-500" : "bg-green-500"}`}
-        >
-          <div className="text-1xl mb-3 font-bold">
-            <ul className="flex flex-row justify-between">
-              <li>{exercises[exerciseIndex]?.unilateral && side}</li>
-              <li>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</li>
-              <li>
-                Set {exercises[exerciseIndex]?.sets ?? 1 - setsRemaining + 1}/
-                {exercises[exerciseIndex]?.sets}
-              </li>
-            </ul>
+        {inProgress && (
+          <div
+            className={`sticky top-0 z-10 bg-opacity-95 p-2 ${isBreak || timerStatus === "idle" ? "bg-orange-500" : "bg-green-500"}`}
+          >
+            <div className="text-1xl mb-1 font-bold">
+              <ul className="flex flex-row justify-around">
+                <li></li>
+                <li>{exercises[exerciseIndex]?.unilateral && side}</li>
+                <li>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</li>
+                <li>
+                  Set {exercises[exerciseIndex]?.sets ?? 1 - setsRemaining + 1}/
+                  {exercises[exerciseIndex]?.sets}
+                </li>
+              </ul>
+              {timerStatus === "idle" && (
+                <div className="mt-3 flex justify-center">Paused</div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
+
         {exercises.map(({ id, name, length, videoId, sets }, index) => (
           <div
             key={id}
@@ -154,57 +168,37 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
           </div>
         ))}
         <div className="sticky bottom-0 h-28 rounded-lg bg-slate-400 bg-opacity-95 p-2">
-          <div className="mt-4 flex justify-evenly">
-            <button onClick={handlePrev}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="currentColor"
+          {!inProgress ? (
+            <div className="mt-6 flex justify-evenly">
+              <button
+                onClick={handleStartRoutine}
+                className="items-center rounded-lg border border-transparent bg-blue-600 px-8 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
               >
-                <path d="M10.6,12.71a1,1,0,0,1,0-1.42l4.59-4.58a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0L9.19,9.88a3,3,0,0,0,0,4.24l4.59,4.59a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.42Z" />
-              </svg>
-            </button>
-            <button onClick={toggleTimer}>
-              {timerStatus === "running" ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  stroke="currentColor"
-                >
-                  <path d="M6.5,0A3.5,3.5,0,0,0,3,3.5v17a3.5,3.5,0,0,0,7,0V3.5A3.5,3.5,0,0,0,6.5,0ZM8,20.5a1.5,1.5,0,0,1-3,0V3.5a1.5,1.5,0,0,1,3,0Z" />
-                  <path d="M17.5,0A3.5,3.5,0,0,0,14,3.5v17a3.5,3.5,0,0,0,7,0V3.5A3.5,3.5,0,0,0,17.5,0ZM19,20.5a1.5,1.5,0,0,1-3,0V3.5a1.5,1.5,0,0,1,3,0Z" />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  stroke="currentColor"
-                >
-                  <path d="M20.494,7.968l-9.54-7A5,5,0,0,0,3,5V19a5,5,0,0,0,7.957,4.031l9.54-7a5,5,0,0,0,0-8.064Zm-1.184,6.45-9.54,7A3,3,0,0,1,5,19V5A2.948,2.948,0,0,1,6.641,2.328,3.018,3.018,0,0,1,8.006,2a2.97,2.97,0,0,1,1.764.589l9.54,7a3,3,0,0,1,0,4.836Z" />
-                </svg>
-              )}
-            </button>
-            <button onClick={handleNext}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="currentColor"
-              >
-                <path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z" />
-              </svg>
-            </button>
-          </div>
-          <div className="w-ma mb-1 ml-auto mr-auto mt-3 max-w-fit text-2xl font-bold">
-            <div>{timeElapsed}</div>
-          </div>
+                Start Routine
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="mt-4 flex justify-evenly">
+                <button onClick={handlePrev}>
+                  <ChevronLeft strokeWidth={2.5} width={48} height={48} />
+                </button>
+                <button onClick={toggleTimer}>
+                  {timerStatus === "running" ? (
+                    <Pause strokeWidth={1.7} width={48} height={48} />
+                  ) : (
+                    <Play strokeWidth={1.7} width={48} height={48} />
+                  )}
+                </button>
+                <button onClick={handleNext}>
+                  <ChevronRight strokeWidth={2.5} width={48} height={48} />
+                </button>
+              </div>
+              <div className="w-ma mb-1 ml-auto mr-auto mt-3 max-w-fit text-2xl font-bold">
+                <div>{timeElapsed}</div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
