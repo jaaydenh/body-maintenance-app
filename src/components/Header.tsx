@@ -55,22 +55,32 @@ async function Header() {
               </>
             )}
             {session?.user && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-x-2 font-medium text-white/[.8] outline-none hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6">
-                    <Profile width={24} height={24} />
-                    Profile
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>My Profile</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <a href="/api/auth/signout">Sign out</a>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                <a
+                  className="font-medium text-white/[.8] hover:text-white"
+                  href="/"
+                  aria-current="page"
+                >
+                  Routines
+                </a>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-x-2 font-medium text-white/[.8] outline-none hover:text-white sm:my-6 sm:border-s sm:border-white/[.3] sm:ps-6">
+                      <Profile width={24} height={24} />
+                      Profile
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>My Profile</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <a href="/api/auth/signout">Sign out</a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
             {!session?.user && (
               <a

@@ -167,7 +167,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
             </div>
           </div>
         ))}
-        <div className="sticky bottom-0 h-28 rounded-lg bg-slate-400 bg-opacity-95 p-2">
+        <div className="sticky bottom-0 h-28  bg-gray-400 bg-opacity-95 p-2">
           {!inProgress ? (
             <div className="mt-6 flex justify-evenly">
               <button
