@@ -3,7 +3,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 
 import { api } from "~/trpc/server";
-import ExerciseList from "./exercise-list";
+import RoutineContainer from "./routine-container";
 // export const dynamic = "force-dynamic";
 
 export default async function Routine({ params }: { params: { id: string } }) {
@@ -17,7 +17,10 @@ export default async function Routine({ params }: { params: { id: string } }) {
   return (
     <main className="flex flex-col items-center justify-center py-6">
       {routineData.exercises && (
-        <ExerciseList exercises={routineData.exercises} />
+        <RoutineContainer
+          exercises={routineData.exercises}
+          name={routineData.name}
+        />
       )}
     </main>
   );

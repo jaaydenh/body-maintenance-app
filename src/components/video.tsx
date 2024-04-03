@@ -7,8 +7,8 @@ interface VideoProps {
   videoRef: (element: HTMLVideoElement) => void;
 }
 
-const handleOnCanPlayThrough = (fileName: string) => {
-  console.log(`Video ${fileName} loaded.`);
+const onCanPlay = (fileName: string) => {
+  console.log(`Video onCanPlay ${fileName}`);
 };
 
 const Video: React.FC<VideoProps> = ({ fileName, videoRef }) => {
@@ -30,7 +30,7 @@ const Video: React.FC<VideoProps> = ({ fileName, videoRef }) => {
       preload="auto"
       playsInline
       aria-label="Video player"
-      onCanPlayThrough={() => handleOnCanPlayThrough(fileName)}
+      onCanPlay={() => onCanPlay(fileName)}
     >
       <source src={fileName} type="video/mp4" />
       Your browser does not support the video tag.

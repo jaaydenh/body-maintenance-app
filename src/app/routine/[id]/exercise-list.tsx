@@ -5,27 +5,21 @@ import { ChevronRight, ChevronLeft, Play, Pause } from "lucide-react";
 
 import { useInterval } from "../../hooks/useInterval";
 import Video from "@/components/video";
-
-type ExerciseAPIResponse = {
-  id: number;
-  name: string;
-  description: string;
-  videoId: string;
-  length: number;
-  sets: number;
-  unilateral: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { type ExerciseAPIResponse } from "~/app/types";
 
 const BREAK_DURATION = 5;
 
 interface ExerciseListProps {
   exercises: ExerciseAPIResponse[];
+  status: string;
+  handleStatusChange: (nextStatus: string) => void;
 }
 
-const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
-  const [inProgress, setInProgress] = useState(false);
+const ExerciseList: React.FC<ExerciseListProps> = ({
+  exercises,
+  status,
+  handleStatusChange,
+}) => {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = React.useState(BREAK_DURATION);
   const [setsRemaining, setSetsRemaining] = useState(exercises[0]?.sets ?? 1);
@@ -73,7 +67,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   };
 
   const handleStartRoutine = () => {
-    setInProgress(true);
+    handleStatusChange("inProgress");
     toggleTimer();
   };
 
@@ -81,10 +75,10 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
     // TODO: play sound
 
     if (isBreak) {
-      setIsBreak(false);
-      if (exercises.length >= exerciseIndex) {
+      if (exerciseIndex < exercises.length) {
         setTimeElapsed(exercises[exerciseIndex]?.length ?? 0);
       }
+      setIsBreak(false);
 
       try {
         if (typeof videoRefs.current !== "undefined") {
@@ -101,6 +95,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
         console.log(error);
       }
     } else {
+      if (exerciseIndex === exercises.length - 1 && setsRemaining === 1) {
+        handleStatusChange("completed");
+      }
       setIsBreak(true);
       setTimeElapsed(BREAK_DURATION);
       videoRefs.current[exerciseIndex]?.pause();
@@ -124,7 +121,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
   return (
     <>
       <div className="h-[85vh] w-auto overflow-y-auto overflow-x-clip pr-2">
-        {inProgress && (
+        {status === "inProgress" && (
           <div
             className={`sticky top-0 z-10 bg-opacity-95 p-2 ${isBreak || timerStatus === "idle" ? "bg-orange-500" : "bg-green-500"}`}
           >
@@ -168,7 +165,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({ exercises }) => {
           </div>
         ))}
         <div className="sticky bottom-0 h-28  bg-gray-400 bg-opacity-95 p-2">
-          {!inProgress ? (
+          {status !== "inProgress" ? (
             <div className="mt-6 flex justify-evenly">
               <button
                 onClick={handleStartRoutine}

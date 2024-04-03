@@ -70,9 +70,7 @@ export async function createRoutines(form: typeof FORM_STATE) {
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const schema = z.object({
-  email: z.string().email({
-    message: 'Invalid email address',
-  }),
+  email: z.string().email(),
 })
 
 export async function createContact(prevState: { message: string }, formData: FormData) {
