@@ -27,6 +27,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
   const [isBreak, setIsBreak] = useState(true);
   const [timerStatus, setTimerStatus] = React.useState("idle");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   if (videoRefs.current[exerciseIndex]) {
     videoRefs.current[exerciseIndex]?.scrollIntoView({
@@ -40,40 +41,58 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     () => {
       setTimeElapsed((timeElapsed) => timeElapsed - 1);
       if (timeElapsed === 1) {
-        timerComplete();
+        timerComplete().then(
+          () => console.log("timer complete"),
+          (error) => console.log(error),
+        );
       }
     },
     timerStatus === "running" ? 1000 : null,
   );
 
-  const toggleTimer = () => {
+  const toggleTimer = async () => {
     setTimerStatus((status) => (status === "running" ? "idle" : "running"));
   };
 
-  const handlePrev = () => {
+  const handlePrev = async () => {
     if (exerciseIndex === 0) return;
 
     setSetsRemaining(exercises[exerciseIndex + -1]?.sets ?? 1);
     setExerciseIndex((prevIndex) => {
       return prevIndex > 0 ? prevIndex - 1 : 0;
     });
+
+    if (audioRef.current !== null) {
+      audioRef.current.src = `/audio/${exercises[exerciseIndex - 1]?.videoId}.mp3`;
+      audioRef.current.load();
+      await audioRef.current.play();
+    }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setSetsRemaining(exercises[exerciseIndex + 1]?.sets ?? 1);
     setExerciseIndex((prevIndex) => {
       return prevIndex < exercises.length - 1 ? prevIndex + 1 : prevIndex;
     });
+
+    if (audioRef.current !== null) {
+      audioRef.current.src = `/audio/${exercises[exerciseIndex + 1]?.videoId}.mp3`;
+      audioRef.current.load();
+      await audioRef.current.play();
+    }
   };
 
-  const handleStartRoutine = () => {
+  const handleStartRoutine = async () => {
     handleStatusChange("inProgress");
-    toggleTimer();
+    if (audioRef.current !== null) {
+      audioRef.current.src = `/audio/${exercises[exerciseIndex]?.videoId}.mp3`;
+      audioRef.current.load();
+      await audioRef.current.play();
+    }
+    await toggleTimer();
   };
 
-  const timerComplete = () => {
-    // TODO: play sound
-
+  const timerComplete = async () => {
     if (isBreak) {
       if (exerciseIndex < exercises.length) {
         setTimeElapsed(exercises[exerciseIndex]?.length ?? 0);
@@ -107,10 +126,10 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
       if (setsRemaining === 1) {
         if (exercises[exerciseIndex]?.unilateral) {
           if (side === "left") {
-            handleNext();
+            await handleNext();
           }
         } else {
-          handleNext();
+          await handleNext();
         }
       } else {
         setSetsRemaining((current) => current - 1);
@@ -141,7 +160,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
             </div>
           </div>
         )}
-
+        <audio ref={audioRef} />
         {exercises.map(({ id, name, length, videoId, sets }, index) => (
           <div
             key={id}
@@ -150,7 +169,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
           >
             <div className="flex items-center justify-center overflow-hidden rounded-lg pl-6 pr-10">
               <Video
-                fileName={`../${videoId}.mp4`}
+                fileName={`../video/${videoId}.mp4`}
                 videoRef={(element: HTMLVideoElement) => {
                   videoRefs.current[index] = element;
                 }}
