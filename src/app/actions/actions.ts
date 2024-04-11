@@ -98,3 +98,28 @@ export async function createContact(prevState: { message: string }, formData: Fo
     return { message: 'Failed to subscribe' }
   }
 }
+
+export async function checkEmailExists(prevState: { message: string, exists: boolean | null }, formData: FormData) {
+  const parse = schema.safeParse({
+    email: formData.get('email'),
+  })
+
+  if (!parse.success) {
+    return {
+      message: 'Invalid email address',
+      exists: null
+    }
+  }
+
+  try {
+    const result = await api.user.get.query({ email: parse.data.email })
+    if (result) {
+      return { message: '', exists: true }
+    } else {
+      return { message: '', exists: false }
+    }
+  } catch (error) {
+    console.log(error);
+    return { message: 'Failed to check if email exists', exists: null }
+  }
+}

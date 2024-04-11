@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "sonner";
 
 import Header from "@/components/Header";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -29,6 +30,7 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <Header />
+          <Toaster richColors />
           {children}
         </TRPCReactProvider>
         <Analytics />
