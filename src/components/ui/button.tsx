@@ -65,7 +65,7 @@ export function Button({
       type={props.onClick ? "button" : "submit"}
       className={cn(
         "group flex h-10 w-full items-center justify-center space-x-2 rounded-md border px-4 text-sm transition-all",
-        props.disabled || loading
+        props.disabled ?? loading
           ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
           : {
               "border-black bg-black text-white hover:bg-white hover:text-black":
