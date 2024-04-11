@@ -1,6 +1,6 @@
 import { cn } from "~/lib/utils";
 import { type ReactNode } from "react";
-import LoadingSpinner from "./loading-spinner";
+import { Spinner } from "@nextui-org/react";
 // import { Tooltip } from "./tooltip";
 
 export interface ButtonProps
@@ -86,7 +86,7 @@ export function Button({
       disabled={props.disabled ?? loading}
       {...props}
     >
-      {loading ? <LoadingSpinner /> : icon ? icon : null}
+      {loading ? <Spinner /> : icon ? icon : null}
       {text && <p className={cn(shortcut && "flex-1 text-left")}>{text}</p>}
       {shortcut && (
         <kbd
