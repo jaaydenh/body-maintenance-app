@@ -23,7 +23,7 @@ const Video: React.FC<VideoProps> = ({ fileName, videoRef }) => {
   React.useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
-    }, 750);
+    }, 1000);
   });
 
   return (

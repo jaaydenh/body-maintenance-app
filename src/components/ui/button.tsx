@@ -86,7 +86,7 @@ export function Button({
       disabled={props.disabled ?? loading}
       {...props}
     >
-      {loading ? <Spinner /> : icon ? icon : null}
+      {loading ? <Spinner size="sm" /> : icon ? icon : null}
       {text && <p className={cn(shortcut && "flex-1 text-left")}>{text}</p>}
       {shortcut && (
         <kbd
