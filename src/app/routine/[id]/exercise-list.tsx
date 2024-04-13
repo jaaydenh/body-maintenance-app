@@ -29,9 +29,12 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
   const [timerStatus, setTimerStatus] = React.useState("idle");
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const exerciseAudio = useRef(new Array<Howl>());
-  const startExerciseSfx = new Howl({ src: [`/sfx/start-exercise.mp3`] });
+  const exerciseStartedSfx = new Howl({ src: [`/sfx/start-exercise.mp3`] });
   const almostDoneSfx = new Howl({ src: [`/sfx/almost-done.mp3`] });
   const routineCompleteSfx = new Howl({ src: [`/sfx/routine-completed.mp3`] });
+
+  const leftAudio = new Howl({ src: [`/audio/left.mp3`] });
+  const rightAudio = new Howl({ src: [`/audio/right.mp3`] });
 
   useEffect(() => {
     exerciseAudio.current = exercises.map((exercise) => {
@@ -54,10 +57,11 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         almostDoneSfx.play();
       }
       if (timeElapsed === 1) {
-        timerComplete().then(
-          () => console.log("timer complete"),
-          (error) => console.log(error),
-        );
+        if (isBreak) {
+          void breakCompleted();
+        } else {
+          void exerciseCompleted();
+        }
       }
     },
     timerStatus === "running" ? 1000 : null,
@@ -67,78 +71,114 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     setTimerStatus((status) => (status === "running" ? "idle" : "running"));
   };
 
+  function delay(milliseconds: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+  }
+
+  const playExerciseVoice = async (index: number, nextSide: string) => {
+    exerciseAudio.current[index]?.play();
+    await delay(2000);
+
+    if (exercises[index]?.unilateral) {
+      if (nextSide === "left") {
+        leftAudio.play();
+      } else {
+        rightAudio.play();
+      }
+    }
+  };
+
   const handlePrev = async () => {
     if (exerciseIndex === 0) return;
-
+    videoRefs.current[exerciseIndex]?.pause();
     setSetsRemaining(exercises[exerciseIndex + -1]?.sets ?? 1);
+    setSide("right");
     setExerciseIndex((prevIndex) => {
       return prevIndex > 0 ? prevIndex - 1 : 0;
     });
-
-    exerciseAudio.current[exerciseIndex - 1]?.play();
+    setIsBreak(true);
+    setTimeElapsed(BREAK_DURATION);
+    Howler.stop();
+    await playExerciseVoice(exerciseIndex - 1, "right");
   };
 
   const handleNext = async () => {
+    videoRefs.current[exerciseIndex]?.pause();
     setSetsRemaining(exercises[exerciseIndex + 1]?.sets ?? 1);
+    setSide("right");
     setExerciseIndex((prevIndex) => {
       return prevIndex < exercises.length - 1 ? prevIndex + 1 : prevIndex;
     });
-
-    exerciseAudio.current[exerciseIndex + 1]?.play();
+    setIsBreak(true);
+    setTimeElapsed(BREAK_DURATION);
+    Howler.stop();
+    await playExerciseVoice(exerciseIndex + 1, "right");
   };
 
   const handleStartRoutine = async () => {
     handleStatusChange("inProgress");
-    exerciseAudio.current[exerciseIndex]?.play();
     await toggleTimer();
+    await playExerciseVoice(exerciseIndex, side);
   };
 
-  const timerComplete = async () => {
-    if (isBreak) {
-      if (exerciseIndex < exercises.length) {
-        setTimeElapsed(exercises[exerciseIndex]?.length ?? 0);
-      }
-      setIsBreak(false);
+  const breakCompleted = async () => {
+    if (exerciseIndex >= 0 && exerciseIndex < exercises.length) {
+      setTimeElapsed(exercises[exerciseIndex]?.length ?? 0);
+    }
 
-      try {
-        if (typeof videoRefs.current !== "undefined") {
-          videoRefs.current[exerciseIndex]?.play().then(
-            (value) => {
-              console.log(value);
-            },
-            (error) => {
-              throw error;
-            },
-          );
-        }
-      } catch (error) {
+    if (typeof videoRefs.current !== "undefined") {
+      void videoRefs.current[exerciseIndex]?.play().catch((error) => {
         console.log(error);
-      }
-      startExerciseSfx.play();
-    } else {
-      if (exerciseIndex === exercises.length - 1 && setsRemaining === 1) {
+        throw error;
+      });
+    }
+
+    exerciseStartedSfx.play();
+    setIsBreak(false);
+  };
+
+  const exerciseCompleted = async () => {
+    if (exerciseIndex === exercises.length - 1 && setsRemaining === 1) {
+      if (
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        (exercises[exerciseIndex]?.unilateral && side === "left") ||
+        !exercises[exerciseIndex]?.unilateral
+      ) {
         handleStatusChange("completed");
         routineCompleteSfx.play();
-      }
-      setIsBreak(true);
-      setTimeElapsed(BREAK_DURATION);
-      videoRefs.current[exerciseIndex]?.pause();
-      if (exercises[exerciseIndex]?.unilateral) {
-        setSide((current) => (current === "left" ? "right" : "left"));
-      }
-      if (setsRemaining === 1) {
-        if (exercises[exerciseIndex]?.unilateral) {
-          if (side === "left") {
-            await handleNext();
-          }
-        } else {
-          await handleNext();
-        }
-      } else {
-        setSetsRemaining((current) => current - 1);
+        return;
       }
     }
+
+    setIsBreak(true);
+    setTimeElapsed(BREAK_DURATION);
+
+    if (exercises[exerciseIndex]?.unilateral) {
+      const nextSide = side === "left" ? "right" : "left";
+      setSide(nextSide);
+
+      if (setsRemaining === 1 && side === "left") {
+        return await handleNext();
+      }
+
+      if (side === "left") {
+        setSetsRemaining((current) => current - 1);
+      }
+
+      await playExerciseVoice(exerciseIndex, nextSide);
+    } else {
+      if (setsRemaining === 1) {
+        return await handleNext();
+      }
+      setSetsRemaining((current) => current - 1);
+
+      await playExerciseVoice(exerciseIndex, side);
+    }
   };
+
+  const currentSet = 1 + (exercises[exerciseIndex]?.sets ?? 1) - setsRemaining;
 
   return (
     <>
@@ -153,8 +193,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                 <li>{exercises[exerciseIndex]?.unilateral && side}</li>
                 <li>{isBreak ? "Break" : exercises[exerciseIndex]?.name}</li>
                 <li>
-                  Set {exercises[exerciseIndex]?.sets ?? 1 - setsRemaining + 1}/
-                  {exercises[exerciseIndex]?.sets}
+                  Set {currentSet}/{exercises[exerciseIndex]?.sets}
                 </li>
               </ul>
               {timerStatus === "idle" && (
