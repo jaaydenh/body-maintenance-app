@@ -10,12 +10,12 @@ datasource db {
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   createdById String
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdBy   User      @relation(fields: [createdById], references: [id])
 
   @@index([name])
   @@index([createdById])
@@ -33,70 +33,77 @@ model Exercise {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  routines RoutinesExercises[]
+  routines RoutinesExercise[]
 
   @@index([name])
 }
 
 model Routine {
-  id          Int        @id @default(autoincrement()) @db.UnsignedInt
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
   name        String
   ownerId     String
-  duration    Int        @default(120)
+  duration    Int       @default(120)
   scheduledAt DateTime
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  owner       User       @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  owner       User      @relation(fields: [ownerId], references: [id])
   
-  exercises RoutinesExercises[]
+  exercises RoutinesExercise[]
 
   @@index([ownerId])
 }
 
-model RoutinesExercises {
-  routine    Routine  @relation(fields: [routineId], references: [id])
-  routineId  Int @db.UnsignedInt
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  exerciseId Int @db.UnsignedMediumInt
+model RoutinesExercise {
+  routine    Routine   @relation(fields: [routineId], references: [id])
+  routineId  Int       @db.UnsignedInt
+  exercise   Exercise  @relation(fields: [exerciseId], references: [id])
+  exerciseId Int       @db.UnsignedMediumInt
   index      Int
 
   @@id([routineId, exerciseId])
 }
 
+model RoutineHistory {
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  routineId   Int       @db.UnsignedInt
+  completedAt DateTime  @default(now())
+  difficulty  Int       @db.TinyInt
+}
+
 // Necessary for Next auth
 model Account {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?  @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
+  id           String    @id @default(cuid())
+  sessionToken String    @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -107,7 +114,7 @@ model User {
 
 model VerificationToken {
   identifier String
-  token      String   @unique
+  token      String    @unique
   expires    DateTime
 
   @@unique([identifier, token])
