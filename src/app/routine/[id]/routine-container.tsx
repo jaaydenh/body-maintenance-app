@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 import ExerciseList from "./exercise-list";
-import { type ExerciseAPIResponse } from "~/app/types";
+import { type Exercise } from "~/app/types";
 
 interface ExerciseListProps {
   name: string;
-  exercises: ExerciseAPIResponse[];
+  exercises: Exercise[];
 }
 
 const RoutineContainer: React.FC<ExerciseListProps> = ({ name, exercises }) => {

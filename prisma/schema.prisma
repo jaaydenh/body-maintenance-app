@@ -32,7 +32,8 @@ model Exercise {
   unilateral  Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  routines    Routine[]
+
+  routines RoutinesExercises[]
 
   @@index([name])
 }
@@ -46,9 +47,20 @@ model Routine {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   owner       User       @relation(fields: [ownerId], references: [id])
-  exercises   Exercise[]
+  
+  exercises RoutinesExercises[]
 
   @@index([ownerId])
+}
+
+model RoutinesExercises {
+  routine    Routine  @relation(fields: [routineId], references: [id])
+  routineId  Int @db.UnsignedInt
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId Int @db.UnsignedMediumInt
+  index      Int
+
+  @@id([routineId, exerciseId])
 }
 
 // Necessary for Next auth

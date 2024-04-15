@@ -11,19 +11,24 @@ import { type FORM_STATE } from "@/components/CreateTaskMultiStepFormContainer";
 const MORNING_MOBILITY = {
   name: 'Morning Mobility', routineLength: 5, exercises: [
     {
-      id: 1,
+      id: 6,
+      index: 2,
     },
     {
-      id: 2,
+      id: 7,
+      index: 1,
     },
     {
-      id: 3,
+      id: 8,
+      index: 6,
     },
     {
-      id: 4,
+      id: 11,
+      index: 5,
     },
     {
-      id: 5,
+      id: 12,
+      index: 3,
     }
   ]
 }
@@ -32,9 +37,11 @@ const DESK_PREHAB = {
   name: 'Desk Prehab', routineLength: 5, exercises: [
     {
       id: 1,
+      index: 1,
     },
     {
       id: 2,
+      index: 2,
     },
   ]
 }
@@ -43,9 +50,11 @@ const HIP_OPENER = {
   name: 'Hip Opener', routineLength: 5, exercises: [
     {
       id: 4,
+      index: 1,
     },
     {
       id: 5,
+      index: 2,
     },
   ]
 }

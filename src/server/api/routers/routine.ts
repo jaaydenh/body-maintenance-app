@@ -7,6 +7,7 @@ import {
 
 const exerciseSchema = z.object({
   id: z.number(),
+  index: z.number(),
 })
 
 export const routineRouter = createTRPCRouter({
@@ -20,7 +21,14 @@ export const routineRouter = createTRPCRouter({
           duration: input.routineLength * 60,
           owner: { connect: { id: ctx.session.user.id } },
           exercises: {
-            connect: input.exercises
+            create: input.exercises.map(exercise => ({
+              index: exercise.index,
+              exercise: {
+                connect: {
+                  id: exercise.id
+                }
+              }
+            }))
           }
         },
       });
@@ -37,9 +45,22 @@ export const routineRouter = createTRPCRouter({
     .input(z.object({ id: z.number().int() }))
     .query(({ ctx, input }) => {
       return ctx.db.routine.findUnique({
-        where: { id: input.id },
-        include: {
-          exercises: true
+        where: {
+          id: input.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          duration: true,
+          exercises: {
+            select: {
+              index: true,
+              exercise: true
+            },
+            orderBy: {
+              index: 'asc'
+            }
+          }
         }
       });
     }),

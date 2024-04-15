@@ -6,12 +6,12 @@ import { Howl } from "howler";
 
 import { useInterval } from "../../hooks/useInterval";
 import Video from "@/components/video";
-import { type ExerciseAPIResponse } from "~/app/types";
+import { type Exercise } from "~/app/types";
 
 const BREAK_DURATION = 5;
 
 interface ExerciseListProps {
-  exercises: ExerciseAPIResponse[];
+  exercises: Exercise[];
   status: string;
   handleStatusChange: (nextStatus: string) => void;
 }
