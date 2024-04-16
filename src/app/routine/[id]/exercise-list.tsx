@@ -6,17 +6,20 @@ import { Howl } from "howler";
 
 import { useInterval } from "../../hooks/useInterval";
 import Video from "@/components/video";
+import { setRoutineCompleted } from "../../../app/actions/actions";
 import { type Exercise } from "~/app/types";
 
 const BREAK_DURATION = 5;
 
 interface ExerciseListProps {
+  routineId: number;
   exercises: Exercise[];
   status: string;
   handleStatusChange: (nextStatus: string) => void;
 }
 
 const ExerciseList: React.FC<ExerciseListProps> = ({
+  routineId,
   exercises,
   status,
   handleStatusChange,
@@ -148,6 +151,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
       ) {
         handleStatusChange("completed");
         routineCompleteSfx.play();
+        await setRoutineCompleted(routineId);
         return;
       }
     }

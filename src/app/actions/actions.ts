@@ -108,6 +108,23 @@ export async function createContact(prevState: { message: string }, formData: Fo
   }
 }
 
+export async function setRoutineCompleted(id: number) {
+  const today = new Date();
+
+  const mostRecentRoutine = await api.routineHistory.get.query({
+    id: Number(id),
+  });
+
+  if (
+    mostRecentRoutine?.completedAt.setHours(0, 0, 0, 0) !==
+    today.setHours(0, 0, 0, 0)
+  ) {
+    await api.routineHistory.setCompleted.mutate({
+      id: Number(id),
+    });
+  }
+}
+
 export async function checkEmailExists(prevState: { message: string, exists: boolean | null }, formData: FormData) {
   const parse = schema.safeParse({
     email: formData.get('email'),

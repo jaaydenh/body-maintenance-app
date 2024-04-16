@@ -7,14 +7,19 @@ import ExerciseList from "./exercise-list";
 import { type Exercise } from "~/app/types";
 
 interface ExerciseListProps {
+  id: number;
   name: string;
   exercises: Exercise[];
 }
 
-const RoutineContainer: React.FC<ExerciseListProps> = ({ name, exercises }) => {
+const RoutineContainer: React.FC<ExerciseListProps> = ({
+  id,
+  name,
+  exercises,
+}) => {
   const [status, setStatus] = useState("notStarted");
 
-  function handleStatusChange(nextStatus: string) {
+  async function handleStatusChange(nextStatus: string) {
     setStatus(nextStatus);
   }
 
@@ -32,6 +37,7 @@ const RoutineContainer: React.FC<ExerciseListProps> = ({ name, exercises }) => {
       )}
       {exercises && status !== "completed" && (
         <ExerciseList
+          routineId={id}
           exercises={exercises}
           status={status}
           handleStatusChange={handleStatusChange}

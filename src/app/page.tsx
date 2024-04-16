@@ -8,7 +8,6 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
 type RoutineHistory = {
-  id: bigint;
   routineId: number;
   completedAt: Date;
   difficulty: number;
@@ -61,7 +60,7 @@ export default async function Home() {
                 {routine.histories?.map((_history, index: number) => (
                   <span
                     key={index}
-                    className="top-1/2 mt-1 inline-block h-3 w-3 rounded-full bg-green-400"
+                    className="top-1/2 mr-1 mt-1 inline-block h-3 w-3 rounded-full bg-green-400"
                   ></span>
                 ))}
               </div>

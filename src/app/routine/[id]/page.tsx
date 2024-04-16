@@ -29,7 +29,11 @@ export default async function Routine({ params }: { params: { id: string } }) {
   return (
     <main className="flex flex-col items-center justify-center py-6">
       {exercises && (
-        <RoutineContainer exercises={exercises} name={routineData.name} />
+        <RoutineContainer
+          exercises={exercises}
+          name={routineData.name}
+          id={routineData.id}
+        />
       )}
     </main>
   );

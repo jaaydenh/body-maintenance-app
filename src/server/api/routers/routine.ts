@@ -42,7 +42,16 @@ export const routineRouter = createTRPCRouter({
         id: true,
         name: true,
         duration: true,
-        histories: true
+        histories: {
+          select: {
+            routineId: true,
+            completedAt: true,
+            difficulty: true,
+          },
+          orderBy: {
+            completedAt: 'desc'
+          }
+        }
       }
     });
   }),
