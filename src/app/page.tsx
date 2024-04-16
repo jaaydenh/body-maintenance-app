@@ -1,19 +1,38 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { CircleCheckBig } from "lucide-react";
 
 import Subscribe from "@/components/Subscribe";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 
+type RoutineHistory = {
+  id: bigint;
+  routineId: number;
+  completedAt: Date;
+  difficulty: number;
+};
+
+type Routine = {
+  id: number;
+  name: string;
+  duration: number;
+  histories: RoutineHistory[] | null;
+};
+
 export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
-  const routines = session?.user ? await api.routine.getActive.query() : null;
+  const routineData: Routine[] | null = session?.user
+    ? await api.routine.getActive.query()
+    : null;
 
-  if (session?.user && !routines?.length) {
+  if (session?.user && !routineData?.length) {
     redirect("/onboarding");
   }
+
+  const today = new Date();
 
   return (
     <main className="flex flex-col">
@@ -23,19 +42,29 @@ export default async function Home() {
           <h1 className="font-extrabold tracking-tight sm:text-[2rem] lg:text-xl">
             Today&apos;s Routines
           </h1>
-          {routines?.map((routine) => (
+          {routineData?.map((routine) => (
             <Link
               key={routine.id}
               href={`/routine/${routine.id}`}
-              className="min-w-80 rounded-md bg-white/10 py-3 text-center font-semibold no-underline transition hover:bg-white/20"
+              className="flex flex-col rounded-md bg-white/10 pt-3 font-semibold no-underline hover:bg-white/20"
             >
-              {routine.name} -{" "}
-              {routine.scheduledAt.toLocaleString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })}{" "}
-              - {routine.duration / 60} min
+              <div className="mb-3 flex min-w-80 flex-row">
+                {routine.histories &&
+                  routine.histories[0]?.completedAt.setHours(0, 0, 0, 0) ==
+                    today.setHours(0, 0, 0, 0) && (
+                    <CircleCheckBig className="relative -left-2 -top-5 h-6 w-6 text-green-400" />
+                  )}
+                <div className="ml-8">{routine.name}</div>
+                <div className="ml-auto mr-6">{routine.duration / 60} min</div>
+              </div>
+              <div className="rounded-b-md bg-stone-500/30 p-1 pl-2 text-xs font-normal">
+                {routine.histories?.map((_history, index: number) => (
+                  <span
+                    key={index}
+                    className="top-1/2 mt-1 inline-block h-3 w-3 rounded-full bg-green-400"
+                  ></span>
+                ))}
+              </div>
             </Link>
           ))}
         </div>

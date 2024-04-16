@@ -38,8 +38,30 @@ export const routineRouter = createTRPCRouter({
     return ctx.db.routine.findMany({
       orderBy: { scheduledAt: "asc" },
       where: { owner: { id: ctx.session.user.id } },
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        histories: true
+      }
     });
   }),
+
+  getHistory: protectedProcedure
+    .input(z.object({ id: z.number().int() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.routine.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          duration: true,
+          histories: true
+        }
+      });
+    }),
 
   get: protectedProcedure
     .input(z.object({ id: z.number().int() }))
