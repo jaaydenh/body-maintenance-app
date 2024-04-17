@@ -5,7 +5,7 @@ import { CircleCheckBig } from "lucide-react";
 
 import Subscribe from "@/components/Subscribe";
 import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/trpc/server";
+import { getActiveRoutines } from "~/server/queries";
 
 type RoutineHistory = {
   routineId: number;
@@ -24,7 +24,7 @@ export default async function Home() {
   noStore();
   const session = await getServerAuthSession();
   const routineData: Routine[] | null = session?.user
-    ? await api.routine.getActive.query()
+    ? await getActiveRoutines()
     : null;
 
   if (session?.user && !routineData?.length) {

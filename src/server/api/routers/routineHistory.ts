@@ -18,7 +18,7 @@ export const routineHistoryRouter = createTRPCRouter({
       })
     }),
 
-  get: protectedProcedure
+  getLastCompletedRoutine: protectedProcedure
     .input(z.object({ id: z.number().int() }))
     .query(({ ctx, input }) => {
       return ctx.db.routineHistory.findFirst({

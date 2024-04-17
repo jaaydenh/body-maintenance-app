@@ -2,9 +2,9 @@ import { unstable_noStore as noStore } from "next/cache";
 import React from "react";
 import { notFound } from "next/navigation";
 
-import { api } from "~/trpc/server";
 import RoutineContainer from "./routine-container";
 import { type RoutineExercise } from "~/app/types";
+import { getRoutine } from "~/server/queries";
 // export const dynamic = "force-dynamic";
 
 type Routine = {
@@ -16,9 +16,7 @@ type Routine = {
 
 export default async function Routine({ params }: { params: { id: string } }) {
   noStore();
-  const routineData: Routine | null = await api.routine.get.query({
-    id: Number(params.id),
-  });
+  const routineData: Routine = await getRoutine(Number(params.id));
 
   const exercises = routineData?.exercises.map((exercise) => exercise.exercise);
 

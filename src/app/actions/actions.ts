@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { revalidatePath } from "next/cache";
 
 import { api } from "~/trpc/server";
+import { getLastCompletedRoutine } from "~/server/queries";
 
 import { type FORM_STATE } from "@/components/CreateTaskMultiStepFormContainer";
 
@@ -60,7 +61,6 @@ const HIP_OPENER = {
 }
 
 export async function createRoutines(form: typeof FORM_STATE) {
-  console.log('createRountines: ', form)
   const routineCount = form.steps.routineCount.value.routineCount;
   if (routineCount === 1) {
     await api.routine.createInitial.mutate(MORNING_MOBILITY)
@@ -109,11 +109,13 @@ export async function createContact(prevState: { message: string }, formData: Fo
 }
 
 export async function setRoutineCompleted(id: number) {
+  if (typeof id !== 'number') {
+    throw new Error();
+  }
+
   const today = new Date();
 
-  const mostRecentRoutine = await api.routineHistory.get.query({
-    id: Number(id),
-  });
+  const mostRecentRoutine = await getLastCompletedRoutine(id);
 
   if (
     mostRecentRoutine?.completedAt.setHours(0, 0, 0, 0) !==
