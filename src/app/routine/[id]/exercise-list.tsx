@@ -70,9 +70,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     timerStatus === "running" ? 1000 : null,
   );
 
-  const toggleTimer = async () => {
+  async function toggleTimer() {
     setTimerStatus((status) => (status === "running" ? "idle" : "running"));
-  };
+  }
 
   function delay(milliseconds: number) {
     return new Promise((resolve) => {
@@ -80,7 +80,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     });
   }
 
-  const playExerciseVoice = async (index: number, nextSide: string) => {
+  async function playExerciseVoice(index: number, nextSide: string) {
     exerciseAudio.current[index]?.play();
     await delay(2000);
 
@@ -91,9 +91,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         rightAudio.play();
       }
     }
-  };
+  }
 
-  const handlePrev = async () => {
+  async function handlePrev() {
     if (exerciseIndex === 0) return;
     videoRefs.current[exerciseIndex]?.pause();
     setSetsRemaining(exercises[exerciseIndex + -1]?.sets ?? 1);
@@ -105,9 +105,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     setTimeElapsed(BREAK_DURATION);
     Howler.stop();
     await playExerciseVoice(exerciseIndex - 1, "right");
-  };
+  }
 
-  const handleNext = async () => {
+  async function handleNext() {
     videoRefs.current[exerciseIndex]?.pause();
     setSetsRemaining(exercises[exerciseIndex + 1]?.sets ?? 1);
     setSide("right");
@@ -118,15 +118,15 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
     setTimeElapsed(BREAK_DURATION);
     Howler.stop();
     await playExerciseVoice(exerciseIndex + 1, "right");
-  };
+  }
 
-  const handleStartRoutine = async () => {
+  async function handleStartRoutine() {
     handleStatusChange("inProgress");
     await toggleTimer();
     await playExerciseVoice(exerciseIndex, side);
-  };
+  }
 
-  const breakCompleted = async () => {
+  async function breakCompleted() {
     if (exerciseIndex >= 0 && exerciseIndex < exercises.length) {
       setTimeElapsed(exercises[exerciseIndex]?.length ?? 0);
     }
@@ -140,7 +140,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
 
     exerciseStartedSfx.play();
     setIsBreak(false);
-  };
+  }
 
   const exerciseCompleted = async () => {
     if (exerciseIndex === exercises.length - 1 && setsRemaining === 1) {
