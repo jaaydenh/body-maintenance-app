@@ -3,8 +3,9 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "sonner";
-import { Providers } from "./providers";
 
+import { Providers } from "./providers";
+import { CSPostHogProvider } from "./_analytics/providers";
 import Header from "@/components/Header";
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -25,19 +26,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`font-sans ${inter.variable} min-h-screen bg-[#2e026d] bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white antialiased`}
-      >
-        <TRPCReactProvider>
-          <Providers>
-            <Header />
-            <Toaster richColors />
-            {children}
-          </Providers>
-        </TRPCReactProvider>
-        <Analytics />
-      </body>
-    </html>
+    <CSPostHogProvider>
+      <html lang="en">
+        <body
+          className={`font-sans ${inter.variable} min-h-screen bg-[#2e026d] bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white antialiased`}
+        >
+          <TRPCReactProvider>
+            <Providers>
+              <Header />
+              <Toaster richColors />
+              {children}
+            </Providers>
+          </TRPCReactProvider>
+          <Analytics />
+        </body>
+      </html>
+    </CSPostHogProvider>
   );
 }
